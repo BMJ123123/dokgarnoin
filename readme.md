@@ -4,6 +4,7 @@
 | 이름 | 용도 |
 | ---- | ---- |
 | [app.py](./app.py) | flask 서버 |
+| [modules/db.py](./modules/db.py) | db 간소화 전용 모듈 |
 
 ## 저번 활동
 | 토요일 |
