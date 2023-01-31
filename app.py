@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from modules.db import DBHandler
+from modules.orm import *
 from datetime import datetime
 storage = []
 app = Flask(__name__)
@@ -15,7 +16,8 @@ def get_data():
         device_id = int(request.args.get('id'))
         if db_avg == None or device_id == None:
             raise ValueError("the value is not valid")
-        handler.insert('sensor_data', device_id=device_id, min=db_min, max=db_max, avg=db_avg, datetime=datetime.now())
+        # handler.insert('sensor_data', device_id=device_id, min=db_min, max=db_max, avg=db_avg, datetime=datetime.now())
+        Beacon.get(device_id).add_sensor_val(db_max, db_min, db_avg)
         return jsonify({'result': 'success'})
     except Exception as e:
         return jsonify({'result': 'failed', 'error_code': str(e)})
@@ -34,8 +36,8 @@ def ave_get():
     #         cnt += 1
     # if cnt != 0:
     #     db_avg /= cnt
-    handler = DBHandler("noin.db")
-    db_avg = handler.select_one("sensor_data", finders=("avg(avg)",), where=f"device_id={device_id}")
+    # handler = DBHandler("noin.db")
+    # db_avg = handler.select_one("sensor_data", finders=("avg(avg)",), where=f"device_id={device_id}")
     return jsonify({'result': 'success', 'msg': db_avg})
 
 
