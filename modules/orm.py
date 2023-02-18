@@ -66,12 +66,13 @@ class Beacon(DBHandler):
 
 class SensorData(DBHandler):
     TABLE_NAME = "sensor_data"
-    def __init__(self, device_id, _max, _min, avg, datetime):
+    def __init__(self, device_id, _max, _min, avg, datetime, valtype):
         self.device_id = device_id
         self.max = _max
         self.min = _min
         self.avg = avg
         self.datetime = datetime
+        self.type = valtype
         
     def __repr__(self) -> str:
         return f"SensorData_{self.device_id}(_max={self.max}, _min={self.min}, datetime={self.datetime})"
@@ -82,6 +83,11 @@ class SensorData(DBHandler):
         many = dbs.select(SensorData.TABLE_NAME, where=device_id)
         return [SensorData(*one) for one in many]
     
+    @staticmethod
+    def get_by_type(valtype):
+        dbs = get_db()
+        many = dbs.select(SensorData.TABLE_NAME, where=f"type={valtype}")
+        return [SensorData(*one) for one in many]
 
 
 if __name__ == "__main__":
