@@ -60,22 +60,21 @@ class Beacon(DBHandler):
        dbs = get_db()
        many = dbs.select()
 
-    def add_sensor_val(self, _max, _min ,avg):
+    def add_sensor_val(self, val):
         dbs = get_db()
-        dbs.insert(SensorData.TABLE_NAME, device_id= self.device_id, max=_max, min=_min, avg=avg, datetime=datetime.now())
+        dbs.insert(SensorData.TABLE_NAME, device_id= self.device_id, str_value=val, datetime=datetime.now())
 
 class SensorData(DBHandler):
     TABLE_NAME = "sensor_data"
-    def __init__(self, device_id, _max, _min, avg, datetime):
+    def __init__(self, device_id, str_value, datetime):
         self.device_id = device_id
-        self.max = _max
-        self.min = _min
-        self.avg = avg
+        self.value_str = str_value
         self.datetime = datetime
         
     def __repr__(self) -> str:
-        return f"SensorData_{self.device_id}(_max={self.max}, _min={self.min}, datetime={self.datetime})"
-
+        return f"SensorData_{self.device_id}({self.value_str=}, translated={self.decode_audio()}, datetime={self.datetime})"
+    def decode_audio(self, chunk=3):
+        return [int(self.value_str[i*chunk:(i+1)*chunk], 16) for i in range(len(self.value_str)//chunk)]
     @staticmethod
     def get(device_id):
         dbs = get_db()

@@ -29,9 +29,7 @@ def connect_db(name):
         query = """
             CREATE TABLE sensor_data (
                     device_id        INTEGER NOT NULL,
-                    max        INTEGER NOT NULL,
-                    min        INTEGER NOT NULL,
-                    avg        INTEGER NOT NULL,
+                    str_value        TEXT NOT NULL,
                     datetime   DATETIME NOT NULL,
                     FOREIGN KEY(device_id) REFERENCES beacon(device_id)
             )
