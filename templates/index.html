@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<img src="단대부고_로고.png" alt="K-DANKOOK">
+<h1>사용자 관리</h1>
+<p><span>총 사용자수: {{ users | length }}</span></p>
+<table class="custom-table">
+    <th>
+        <form action="/server-url" method="POST">
+            <input type="text" name="unique-number" id="unique-number" placeholder="고유번호">
+            <button type="submit">전송</button>
+        </form>
+    </th>
+    <th>
+        <form action="/server-url2" method="POST">
+            <input type="text" name="unique-name" id="unique-name" placeholder="이름">
+            <button type="submit">전송</button>
+        </form>  
+    </th>
+    <th>
+        <form action="/server-url3" method="POST">
+            <input type="text" name="unique-place" id="unique-place" placeholder="지역명">
+            <button type="submit">전송</button>
+        </form>
+    </th>
+    <th>
+        <form action="/server-url5" method="POST">
+            <input type="text" name="unique-PG" id="unique-PG" placeholder="관심위험등급">
+            <button type="submit">전송</button>
+        </form>
+    </th>
+    <th>
+        <form action="/server-url4" method="POST">
+            <input type="text" name="unique-phone-number" id="unique-phone-number" placeholder="전화번호">
+            <button type="submit">전송</button>
+        </form>
+    </th>
+    {% for user in users %}
+    <tr>
+        <td align="center">{{ user.user_id }}</td>
+        <td align="center"><a href="/user/{{ user.user_id }}" class="name">{{ user.name }}</a></td>
+        <td align="center">{{ user.place }}</td>
+        <td align="center">{{ user.PG }}</td>
+        <td align="center">{{ user.phone_number }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}
