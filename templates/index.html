@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 
-
-<img src="단대부고_로고.png" alt="K-DANKOOK">
 <h1>사용자 관리</h1>
 <p><span>총 사용자수: {{ users | length }}</span></p>
 <table class="custom-table">
@@ -39,7 +37,7 @@
     {% for user in users %}
     <tr>
         <td align="center">{{ user.user_id }}</td>
-        <td align="center"><a href="/user/{{ user.user_id }}" class="name">{{ user.name }}</a></td>
+        <td align="center"><a href="/user?user_id={{ user.user_id }}" class="name">{{ user.name }}</a></td>
         <td align="center">{{ user.place }}</td>
         <td align="center">{{ user.PG }}</td>
         <td align="center">{{ user.phone_number }}</td>

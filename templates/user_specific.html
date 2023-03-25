@@ -1,40 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>{{ user.name }}({{ user.user_id }})에 대한 정보</h1>
-<h2>보유 비콘 목록</h2>
-    <div>
-        {% if user.get_beacons() %}
-        {% for beacon in user.get_beacons() %}
-        {{ beacon.get_point() }}({{ beacon.device_id }}) <br>
-        <div>
-            <table>
-                <th>
-                    시간
-                </th>
-                <th>
-                    조용
-                </th>
-                <th>
-                    생활소음
-                </th>
-                <th>
-                    시끄러움
-                </th>
-                {% for timeseries in beacon.get_env_1_week_desc() %}
-                <tr>
-                    {% for value in timeseries %}
-                    <td align="center">{{ value }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-        {% endfor %}
-        {% else %}
-        <h2>없음</h2>
-        {% endif %}
-    </div>
-</div>
 <br />
 <div class="container">
     <div class="box3">
@@ -42,24 +8,86 @@
             <h2>연세: {{ user.age }}</h2>
             <h2>사는 곳: {{ user.place }}</h2>
             <h2>전화번호: <a href="tel:+{{ user.phone_number }}">{{ user.phone_number }}</a></h2>
-        <div class="box1">
-            <div class="box2">특이 사항
+            <div class="box1">
+                <div class="box2">특이 사항
+                </div>
+                <form action="/notes/add" method="post">
+                    <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                    <label for="detail">상세 내용:</label>
+                    <input type="text" id="detail" name="detail" value="{{ previous_detail }}">
+                    <button type="submit">저장</button>
+                </form>
+                <table>
+                    <th>날짜</th>
+                    <th>텍스트</th>
+                    <th>비고</th>
+
+                    {% for note in user.get_note() %}
+                    <tr>
+                        <td align="center">{{ note.datetime.strftime("%Y-%m-%d %H:%M") }}</td>
+                        <td align="center">{{ note.note_detail }}</td>
+                        <td align="center"><button onclick="delete_note({{ note.note_number }})">삭제</button></td>
+                    </tr>
+                    {% endfor %}
+                </table>
             </div>
-            <form action="/add_note" method="post">
-                <input type="hidden" name="user_id" value="{{ user.user_id }}">
-                <input type="text" name="detail">
-                <button type="submit">저장</button>
-                
-            </form>
-            <!-- <form action="/get_note" method="post">
-                <output type="text" name="detail">
-                    {{ user.detail }}
-            </form> -->
         </div>
     </div>
+    <div class="box3">
+        <canvas id="PieChart"></canvas>
+    </div>
 </div>
+<div>
+    <ul class="tabs">
+        <li class="tab-link current" data-tab="tab-1">거실</li>
+        <li class="tab-link" data-tab="tab-2">주방</li>
+        <li class="tab-link" data-tab="tab-3">침실</li>
+    </ul>
 
+    <div id="tab-1" class="tab-content current">
+        <canvas id="Chart1"></canvas>
+    </div>
+    <div id="tab-2" class="tab-content">
+        <canvas id="Chart2"></canvas>
+    </div>
+    <div id="tab-3" class="tab-content">
+        <canvas id="Chart3"></canvas>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script> // 오류 
+    $(document).ready(() => {
+        $('ul.tabs li').click((e) => {
+            let tab = e.target;
+            let tab_id = $(tab).data('tab');
+            console.log(tab, tab_id);
+            $('ul.tabs li').removeClass('current');
+            $('.tab-content').removeClass('current');
 
+            $(tab).addClass('current');
+            $("#" + tab_id).addClass('current');
+        });
+
+        const ctx1 = document.getElementById('Chart1');
+        const ctx2 = document.getElementById('Chart2');
+        const ctx3 = document.getElementById('Chart3');
+        const pctx = document.getElementById('PieChart');
+        const charts = [ctx1, ctx2, ctx3];
+        fetch('/user/graph?user_id={{ user.user_id }}')
+            .then(res => res.json())
+            .then(datas => {
+                console.log(datas);
+                for (i in charts) {
+
+                    new Chart(charts[i], {
+                        type: 'line',
+                        data: datas.datas[i]
+                    });
+                }
+                new Chart(pctx, datas.pie);
+            });
+    });
+</script>
 
 {% endblock %}

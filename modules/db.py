@@ -14,8 +14,7 @@ def connect_db(name):
                     age        INTEGER NOT NULL DEFAULT 0,
                     place        TEXT NOT NULL,
                     phone_number TEXT NOT NULL,
-                    "max"	INTEGER NOT NULL,
-                    "PG"	INTEGER NOT NULL,
+                    PG	INTEGER NOT NULL,
                     PRIMARY KEY(user_id AUTOINCREMENT)
             )
             """
@@ -31,7 +30,7 @@ def connect_db(name):
             """
         c.execute(query)
         query = """
-            CREATE TABLE sensor_data (
+            CREATE TABLE IF NOT EXISTS sensor_data (
                     device_id        INTEGER NOT NULL,
                     str_value        TEXT NOT NULL,
                     datetime   DATETIME NOT NULL,
@@ -41,7 +40,7 @@ def connect_db(name):
             """
         c.execute(query)
         query = """
-            CREATE TABLE description (
+            CREATE TABLE IF NOT EXISTS description (
                     note_number         INTEGER NOT NULL,
                     user_id             INTEGER NOT NULL,
                     note_detail         TEXT NOT NULL,
@@ -53,7 +52,7 @@ def connect_db(name):
         c.execute(query)
 
         conn.commit()
-        print("db initalized")
+        # print("db initalized")
     except sql.OperationalError as err:
         print(err)
         pass
@@ -117,7 +116,7 @@ class DBHandler:
 
 if __name__ == "__main__":
     dbc = DBHandler(env.MAIN_DB_NAME)
-    dbc.insert("user_info", _id_name="user_id", name="백민재", age=15, place="강남", phone_number="010-1234-5678", max = 0, PG=0)
+    dbc.insert("user_info", _id_name="user_id", name="백민재", age=15, place="강남", phone_number="010-1234-5678", PG=0)
     user = dbc.select_one("user_info")
     dbc.insert("beacon",_id_name="device_id", capacity=6, user_id=user[0], point=0)
     dbc.insert("beacon",_id_name="device_id", capacity=6, user_id=user[0], point=1)

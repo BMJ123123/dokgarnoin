@@ -6,12 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?ver=8.1b">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>{{ title }}</title>
 </head>
 <body>
+    <img src="{{ url_for('static', filename='img/단대부고_로고.png') }}" width="384" height="84" alt="K-DANKOOK">
     {% block content %}
     {% endblock %}
 </body>
-
-
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </html>

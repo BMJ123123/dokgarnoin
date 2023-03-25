@@ -12,13 +12,12 @@ def get_db() -> DBHandler:
 class UserInfo:
     TABLE_NAME = "user_info"
 
-    def __init__(self, user_id, name, age, place, phone_number, max, PG):
+    def __init__(self, user_id, name, age, place, phone_number, PG):
         self.user_id = user_id
         self.name = name
         self.age = age
         self.place = place
         self.phone_number = phone_number
-        self.max = max
         self.PG = PG
 
     def __repr__(self) -> str:
@@ -46,11 +45,8 @@ class UserInfo:
         dbs = get_db()
         many = dbs.select()
 
-    # @staticmethod
-    # def get_unique():
-    #     dbs = get_db()
-    #     users = dbs.select(UserInfo.TABLE_NAME, where=f"{user_id=}")
-
+    def get_note(self):
+        return Description.get_all(self.user_id)
 
 class Beacon(DBHandler):
     TABLE_NAME = "beacon"
@@ -87,12 +83,12 @@ class Beacon(DBHandler):
         dbs = get_db()
         now_time = datetime.now()
         time_divisions = [timedelta(hours=24), timedelta(hours=23), timedelta(hours=22), timedelta(hours=21), timedelta(hours=20), timedelta(hours=19), timedelta(hours=18), timedelta(hours=17), timedelta(hours=16), timedelta(hours=15), timedelta(hours=14), timedelta(hours=13), timedelta(hours=12), timedelta(hours=11), timedelta(hours=10), timedelta(hours=9), timedelta(hours=8), timedelta(hours=7), timedelta(hours=6), timedelta(hours=5), timedelta(hours=4), timedelta(hours=3), timedelta(hours=2), timedelta(hours=1)]
-        time_series =  [now_time - times for times in time_divisions]
+        time_series = [now_time - times for times in time_divisions] + [now_time]
         format_time = "%Y-%m-%d %H:%M"
         # print(query)
         outputs = []
-        for series in time_series:
-            query = f"device_id='{self.device_id}' AND datetime BETWEEN '{series.strftime(format_time)}' AND '{now_time.strftime(format_time)}'"
+        for num in range(len(time_series)-1):
+            query = f"device_id='{self.device_id}' AND datetime BETWEEN '{time_series[num].strftime(format_time)}' AND '{time_series[num+1].strftime(format_time)}'"
                                 #여기에 따음표 붙임
             
             many = dbs.select(SensorData.TABLE_NAME, where=query, order_by="datetime", reverse=True)
@@ -100,26 +96,23 @@ class Beacon(DBHandler):
             sounds = [0] * 3
             for one in many:
                 sounds[one.sound_type] += 1
-            outputs.append([series.strftime("%H:%M")] + sounds)
+            outputs.append([time_series[num].strftime("%H:%M")] + sounds)
         return outputs
             
     def get_env_1_week_desc(self):
             dbs = get_db()
             now_time = datetime.now()
-            time_divisions = [timedelta(hours=168)]
-            time_series =  [now_time - times for times in time_divisions]
+            time_division = timedelta(days=7)
+            timerange = now_time - time_division
             format_time = "%Y-%m-%d %H:%M"
             # print(query)
-            outputs = []
-            for series in time_series:
-                query = f"device_id={self.device_id} AND datetime BETWEEN '{series.strftime(format_time)}' AND '{now_time.strftime(format_time)}'"
-                many = dbs.select(SensorData.TABLE_NAME, where=query, order_by="datetime", reverse=True)
-                many = [SensorData(*one) for one in many]
-                sounds = [0] * 3
-                for one in many:
-                    sounds[one.sound_type] += 1
-                outputs.append([series.strftime("%H:%M")] + sounds)
-            return outputs
+            query = f"device_id={self.device_id} AND datetime BETWEEN '{timerange.strftime(format_time)}' AND '{now_time.strftime(format_time)}'"
+            many = dbs.select(SensorData.TABLE_NAME, where=query, order_by="datetime", reverse=True)
+            many = [SensorData(*one) for one in many]
+            sounds = [0] * 3
+            for one in many:
+                sounds[one.sound_type] += 1
+            return sounds
             
     def get_env_total(self):
         dbs = get_db()
@@ -161,10 +154,10 @@ class SensorData(DBHandler):
     MIDDLE = 1
     NOISE = 2
 
-    def __init__(self, device_id: int, str_value: str, datetime: datetime, sound_type: int):
+    def __init__(self, device_id: int, str_value: str, date: datetime, sound_type: int):
         self.device_id = device_id
         self.value_str = str_value
-        self.datetime = datetime
+        self.datetime = datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
         self.sound_type = sound_type
 
     def __repr__(self) -> str:
@@ -186,11 +179,11 @@ class SensorData(DBHandler):
         
 class Description(DBHandler):
     TABLE_NAME = "description"
-    def __init__(self, note_number:int, user_id: int, note_detail: str, datetime: datetime):
+    def __init__(self, note_number:int, user_id: int, note_detail: str, date: datetime):
         self.note_number = note_number
         self.user_id = user_id
         self.note_detail = note_detail
-        self.datetime = datetime
+        self.datetime = datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     
     def __repr__(self):
         return f"Description_{self.note_number}(user_id={self.user_id}, {self.note_detail=}, datetime={self.datetime})"
@@ -211,6 +204,10 @@ class Description(DBHandler):
         dbs = get_db()
         dbs.insert(Description.TABLE_NAME, user_id=user_id, note_detail=note_detail, datetime=datetime.now(), _id_name="note_number")
 
+    @staticmethod
+    def delete_note(note_number: int):
+        dbs = get_db()
+        dbs.delete(Description.TABLE_NAME, where=f"{note_number=}")
     # @staticmethod
     # def print_note(user_id: int, note_detail: str):
     #     dbs = get_db()
