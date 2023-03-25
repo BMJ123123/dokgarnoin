@@ -49,7 +49,6 @@ def get_data():
     except Exception as e:
         return jsonify({'result': 'failed', 'error_code': str(e)})
 
-
 @app.route('/user/graph')
 def get_data_graph():
     user_id = int(request.args.get('user_id'))
@@ -75,13 +74,27 @@ def get_data_graph():
         ]
         datas[i] = dict(labels=labels, datasets=datasets)
     pie_chart = {
-        "label": "일주일 요약",
         "data": {
             "datasets": [{
                 "data": pie,
-                "colors": ['#ff9999', '#66b3ff', '#99ff99'],  # 각 카테고리별 색상
-                "labels": ['silent', 'netural', 'noisy'],  # 각 카테고리 이름
-        }],
+                "backgroundColor": ['#66b3ff', '#ff9999', '#ffa500'],
+                # "hoverBackgroundColor": ['#ffff99', '#ff6666', '#4d94ff'],
+            }],
+            "labels": ['silent', 'netural', 'noisy'],  # 각 카테고리 이름
+        },
+        "options": {
+            "title": {
+                "display": True,
+                "text": "yoyak"
+            },
+            "plugins": {
+                "legend": {
+                    "position": "right",  # 범례 위치 설정
+                    "labels": {
+                        "usePointStyle": True  # 각 항목에 포인트 스타일 사용
+                    }
+                }
+            }
         },
         "type": "pie"  # 차트 타입
     }
