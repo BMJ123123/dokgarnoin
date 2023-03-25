@@ -14,7 +14,7 @@ def connect_db(name):
                     age        INTEGER NOT NULL DEFAULT 0,
                     place        TEXT NOT NULL,
                     phone_number TEXT NOT NULL,
-                    PG	INTEGER NOT NULL,
+                    PG	INTEGER,
                     PRIMARY KEY(user_id AUTOINCREMENT)
             )
             """
