@@ -2,7 +2,6 @@ from modules.db import DBHandler
 import env
 from abc import *
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
 
 
 def get_db() -> DBHandler:
