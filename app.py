@@ -5,8 +5,8 @@ from datetime import datetime
 from keras.models import load_model
 import numpy as np
 import env
-from flask_sqlalchemy import SQLAlchemy
-from flask_paginate import Pagination
+# from flask_sqlalchemy import SQLAlchemy
+# from flask_paginate import Pagination
 
 storage = []
 app = Flask(__name__)
