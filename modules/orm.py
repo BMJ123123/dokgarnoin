@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 def get_db() -> DBHandler:
     return DBHandler(env.MAIN_DB_NAME)
 
-
+# UserInfo 클래스는 사용자 정보를 나타내는 클래스
 class UserInfo:
     TABLE_NAME = "user_info"
 
@@ -26,6 +26,7 @@ class UserInfo:
         dbs = get_db()
         many = dbs.select(Beacon.TABLE_NAME, where=f"user_id={self.user_id}")
         return [Beacon(*one) for one in many]
+    #사용자와 연관된 Beacon 인스턴스를 모두 반환
 
     @staticmethod
     def get(user_id):
@@ -33,19 +34,23 @@ class UserInfo:
         one = dbs.select_one(UserInfo.TABLE_NAME, where=f"{user_id=}")
         return UserInfo(*one)
 
+
     @staticmethod
     def get_all():
         dbs = get_db()
         users = dbs.select(UserInfo.TABLE_NAME)
         return [UserInfo(*user) for user in users]
+    # 모든 사용자 정보를 반환
 
     @staticmethod
     def add(name: str, age: int, place: str):
         dbs = get_db()
         many = dbs.select()
+    # 사용자 정보를 추가
 
     def get_note(self):
         return Description.get_all(self.user_id)
+    # 사용자와 연관된 Description 인스턴스를 모두 반환
 
 class Beacon(DBHandler):
     TABLE_NAME = "beacon"
@@ -69,6 +74,7 @@ class Beacon(DBHandler):
         elif self.point == Beacon.TOP:
             return "TOP"
         return "UNKNOWN"
+    # get_point 메서드는 point 값을 인식 가능한 문자열로 반환
 
     @staticmethod
     def get(device_id: int):
@@ -77,6 +83,7 @@ class Beacon(DBHandler):
         if one is None:
             return None
         return Beacon(*one)
+    # 특정 비콘 정보를 반환
     
     def get_env_desc(self):
         dbs = get_db()
@@ -97,6 +104,7 @@ class Beacon(DBHandler):
                 sounds[one.sound_type] += 1
             outputs.append([time_series[num].strftime("%H:%M")] + sounds)
         return outputs
+    # 비콘의 소리 정보를 최근 24시간 동안 시간 단위로 반환
             
     def get_env_1_week_desc(self):
             dbs = get_db()
@@ -112,6 +120,7 @@ class Beacon(DBHandler):
             for one in many:
                 sounds[one.sound_type] += 1
             return sounds
+    # 비콘의 소리 정보를 최근 1주일 동안 반환
             
     def get_env_total(self):
         dbs = get_db()
@@ -129,12 +138,14 @@ class Beacon(DBHandler):
                 total_sounds[one.sound_type] += 1 # 각각의 sound_type에 해당하는 값을 모두 더함
             outputs.append([series.strftime("%H:%M")] + total_sounds)
         return outputs
+    # 비콘의 소리 정보를 모두 반환
     
     @staticmethod
     def get_all():
         dbs = get_db()
         many = dbs.select(Beacon.TABLE_NAME)
         return [Beacon(*one) for one in many]
+    # 유저에 대입되는 모든 비콘 정보를 반환
 
     @staticmethod
     def add(user_id: int, point: int):
@@ -145,7 +156,7 @@ class Beacon(DBHandler):
         dbs = get_db()
         dbs.insert(SensorData.TABLE_NAME, device_id=self.device_id,
                    str_value=val, sound_type=sound_type, datetime=datetime.now())
-
+    # 센서 값을 추가하는 방법
 
 class SensorData(DBHandler):
     TABLE_NAME = "sensor_data"

@@ -107,7 +107,7 @@ def add_note():
     # user_id = int(request.args.get('user_id'))
     Description.add_note(data.get('user_id'), data.get('detail'))
 
-    return redirect(f'/user/{data.get("user_id")}')
+    return redirect(f'/user?user_id={data.get("user_id")}')
 
 
 @app.route('/notes/delete', methods=['POST'])
@@ -169,22 +169,9 @@ def submit_form4():
     # 여기서 unique_id 값을 데이터베이스에 저장하거나 다른 로직을 처리할 수 있습니다.
     return render_template('index.html', users=li, title="노인 보호 시스템")
 
-
-@app.route('/server-url5', methods=['POST'])  # 지역
-def submit_form5():
-    dbs = get_db()
-    unique_PG = request.form.get('unique-PG')
-    print('관심위험등급:', unique_PG)
-    users = dbs.select(UserInfo.TABLE_NAME, "*",
-                       where=f"PG LIKE \"%{unique_PG}%\"")
-    li = [UserInfo(*user) for user in users]
-    # 여기서 unique_id 값을 데이터베이스에 저장하거나 다른 로직을 처리할 수 있습니다.
-    return render_template('index.html', users=li, title="노인 보호 시스템")
-
-
 if __name__ == "__main__":
     # dbc = DBHandler(env.MAIN_DB_NAME)
-    # dbc.insert("user_info", _id_name="user_id", name="서동우", age=19, place="말레이시아", phone_number="010-2233-4455", PG = 0)
+    # dbc.insert("user_info", _id_name="user_id", name="백종문", age=84, place="말레이시아", phone_number="010-1577-1577")
     # user = dbc.select_one("user_info")
     # dbc.insert("beacon",_id_name="device_id", capacity=6, user_id=user[0], point=0)
     # dbc.insert("beacon",_id_name="device_id", capacity=6, user_id=user[0], point=1)

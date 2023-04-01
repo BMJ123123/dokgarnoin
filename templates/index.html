@@ -23,12 +23,6 @@
         </form>
     </th>
     <th>
-        <form action="/server-url5" method="POST">
-            <input type="text" name="unique-PG" id="unique-PG" placeholder="관심위험등급">
-            <button type="submit">전송</button>
-        </form>
-    </th>
-    <th>
         <form action="/server-url4" method="POST">
             <input type="text" name="unique-phone-number" id="unique-phone-number" placeholder="전화번호">
             <button type="submit">전송</button>
@@ -39,7 +33,6 @@
         <td align="center">{{ user.user_id }}</td>
         <td align="center"><a href="/user?user_id={{ user.user_id }}" class="name">{{ user.name }}</a></td>
         <td align="center">{{ user.place }}</td>
-        <td align="center">{{ user.PG }}</td>
         <td align="center">{{ user.phone_number }}</td>
     </tr>
     {% endfor %}

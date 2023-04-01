@@ -67,12 +67,14 @@ class DBHandler:
 
     def is_free_id(self, table:str, id_name:str, number):
         return len(self.select(table, where=f"{id_name}={number}")) == 0
+    # 특정 테이블에서 틍정 ID필드 값이 중복되지 않는지 확인하는 함수
 
-    def get_free_id(self, table:str, id_name:str, capacity=5):
+    def get_free_id(self, table:str, id_name:str, capacity=5): # 
         while True:
             num = randint(10**(capacity-1), 10**capacity-1)
             if self.is_free_id(table, id_name, num):
                 return num
+    # 특정 테이블에서 사용 가능한 ID값을 생성하는 함수
 
     def select(self, table:str, finders:tuple="*", where:str=None, order_by:str=None, reverse=False, limit:int=0):
         if type(finders) in [list, tuple]:
@@ -87,6 +89,7 @@ class DBHandler:
         # print(query)
         self.cur.execute(query)
         return self.cur.fetchall()
+    # 특정 테이블에서 데이터를 조회하는 함수 해당 조건에 맞는 데이터를 조회하고 반환함
 
     def select_one(self, table:str, finders="*", where=None):
         if type(finders) in [list, tuple]:
@@ -97,22 +100,26 @@ class DBHandler:
         if len(result) == 1:
             result = result[0]
         return result
+    # 특정 테이블에서 단일 데이터를 조회하는 함수 조건에 맞는 데이터 중 첫 번째 데이터를 조회
+
     def insert(self, table:str, _id_name:str=None, capacity:int=5, **kwargs):
         if _id_name:
             kwargs[_id_name] = self.get_free_id(table, _id_name, capacity)
         query = f"INSERT INTO {table}({', '.join(kwargs.keys())}) values({', '.join(['?']*len(kwargs))})"
         self.cur.execute(query, tuple(kwargs.values()))
         self.conn.commit()
+    # 특정 테이블에 데이터를 삽입하는 함수        
 
     def delete(self, table:str, where:str):
         query = f"DELETE FROM {table} WHERE {where}"
         self.cur.execute(query)
         self.conn.commit()
+    # 특정 테이블에서 데이터를 삭제하는 함수 조건에 맞는 데이터를 삭제
 
     def __repr__(self):
         tables = ", ".join(s[0] for s in self.cur.fetchall())
         return f"{self.name}({tables})"
-
+    #DBHandler 객체를 출력할 때 호출되며, 객체에 연결된 테이블 이름을 문자열로 반환
 
 if __name__ == "__main__":
     dbc = DBHandler(env.MAIN_DB_NAME)
