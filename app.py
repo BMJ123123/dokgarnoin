@@ -9,7 +9,7 @@ import env
 # from flask_paginate import Pagination
 
 storage = []
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 
 model = load_model(env.NEURAL_DIR)
@@ -23,15 +23,25 @@ def predict(sound: str) -> int:
     return int(s.argmax())
 
 
+
 @app.route('/')
-def index():
-    return render_template('index.html', users=UserInfo.get_all(), title="노인 보호 시스템")
+def main():
+    return render_template('index.html', users=UserInfo.get_all(), title="노인 보호 시스템", trees=['Dashboard'])
+
+@app.route('/about/vision')
+def about():
+    return render_template('vision.html', title="노인 보호 시스템", trees=['Dashboard', 'vison'])
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html', title="노인 보호 시스템", trees=['Dashboard', 'Contact'])
 
 
 @app.route('/user')
 def user_specific():
     user_id = int(request.args.get('user_id'))
-    return render_template('user_specific.html', user=UserInfo.get(user_id), title="노인 정보")
+    user = UserInfo.get(user_id)
+    return render_template('user_specific.html', user=user, title="노인 정보", trees=['Dashboard', user.name])
 
 
 @app.route('/get', methods=['GET'])
@@ -62,14 +72,29 @@ def get_data_graph():
             {
                 "label": 'silent',
                 "data": [d[1] for d in data],
+                "borderColor": "#66b3ff",
+                "fill": False,
+                "borderWidth": 1.6,
+                "tension": 0.4,
+                "pointStyle": False,
             },
             {
                 "label": 'netural',
                 "data": [d[2] for d in data],
+                "borderColor": "#ff6666",
+                "fill": False,
+                "borderWidth": 1.6,
+                "tension": 0.4,
+                "pointStyle": False
             },
             {
                 "label": 'noisy',
                 "data": [d[3] for d in data],
+                "borderColor": "#ffa500",
+                "fill": False,
+                "borderWidth": 1.6,
+                "tension": 0.4,
+                "pointStyle": False
             },
         ]
         datas[i] = dict(labels=labels, datasets=datasets)
@@ -85,7 +110,7 @@ def get_data_graph():
         "options": {
             "title": {
                 "display": True,
-                "text": "yoyak"
+                "text": "일주일 요약" # <---------------------------------------------------------
             },
             "plugins": {
                 "legend": {
@@ -104,6 +129,7 @@ def get_data_graph():
 @app.route('/notes/add', methods=['POST'])
 def add_note():
     data = dict(request.form)
+    print(data)
     # user_id = int(request.args.get('user_id'))
     Description.add_note(data.get('user_id'), data.get('detail'))
 

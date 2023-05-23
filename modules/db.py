@@ -67,7 +67,7 @@ class DBHandler:
 
     def is_free_id(self, table:str, id_name:str, number):
         return len(self.select(table, where=f"{id_name}={number}")) == 0
-    # 특정 테이블에서 틍정 ID필드 값이 중복되지 않는지 확인하는 함수
+    # 특정 테이블에서 특정 ID필드 값이 중복되지 않는지 확인하는 함수
 
     def get_free_id(self, table:str, id_name:str, capacity=5): # 
         while True:

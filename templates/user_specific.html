@@ -1,76 +1,137 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ user.name }}({{ user.user_id }})에 대한 정보</h1>
-<br />
-<div class="container">
-    <div class="box3">
-        <div>
-            <h2>연세: {{ user.age }}</h2>
-            <h2>사는 곳: {{ user.place }}</h2>
-            <h2>전화번호: <a href="tel:+{{ user.phone_number }}">{{ user.phone_number }}</a></h2>
-            <div class="box1">
-                <div class="box2">특이 사항
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-lg-12 grid-margin px-5 py-2">
+            <a class="btn btn-success" href="/"><i class="typcn typcn-home-outline mr-2"></i>Back to home</a>
+            <h1 class="text-primary mt-4">{{ user.name }}에 대한 정보</h1>
+        </div>
+        <br />
+        <div class="col-md-6 grid-margin stretch-card"> <!-- 정보 -->
+            <div class="card">
+                <div class="card-body">
+                    <h2>정보</h2>
+                    <p class="card-description">연세: {{ user.age }}</p>
+                    <p class="card-description">사는 곳: {{ user.place }}</p>
+                    <p class="card-description">전화번호: <a href="tel:+{{ user.phone_number }}">{{ user.phone_number }}</a>
+                    </p>
                 </div>
-                <form action="/notes/add" method="post">
-                    <input type="hidden" name="user_id" value="{{ user.user_id }}">
-                    <label for="detail">상세 내용:</label>
-                    <input type="text" id="detail" name="detail" value="{{ previous_detail }}">
-                    <button type="submit">저장</button>
-                </form>
-                <table>
-                    <th>날짜</th>
-                    <th>텍스트</th>
-                    <th>비고</th>
-
-                    {% for note in user.get_note() %}
-                    <tr>
-                        <td align="center">{{ note.datetime.strftime("%Y-%m-%d %H:%M") }}</td>
-                        <td align="center">{{ note.note_detail }}</td>
-                        <td align="center"><button onclick="delete_note({{ note.note_number }})">삭제</button></td>
-                    </tr>
-                    {% endfor %}
-                </table>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin stretch-card"> <!-- 파이 차트 -->
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="PieChart" width="636" height="600" style="display: block; width: 636px; height: 600px;"
+                        class="chartjs-render-monitor"></canvas>
+                </div>
             </div>
         </div>
     </div>
-    <div class="pie_chart">
-        <h1 style="text-align:center;">일주일 요약</h1>
-        <canvas id="PieChart"></canvas>
-    </div>
-</div>
-<div>
-    <ul class="tabs">
-        <li class="tab-link current" data-tab="tab-1">거실</li>
-        <li class="tab-link" data-tab="tab-2">주방</li>
-        <li class="tab-link" data-tab="tab-3">침실</li>
-    </ul>
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">특이사항</h4>
+                    <form action="/notes/add" method="post">
+                        <div class="form-group">
+                            <label for="">메모 입력</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="입력" value="{{ previous_detail }}"
+                                    id="detail" name="detail">
+                                <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-sm btn-primary" type="submit">입력</button>
+                                </div>
+                            </div>
+                        </div>
+                        <label for="detail">상세 내용:</label>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <th>날짜</th>
+                            <th>텍스트</th>
+                            <th>비고</th>
 
-    <div id="tab-1" class="tab-content current">
-        <canvas id="Chart1"></canvas>
+                            {% for note in user.get_note() %}
+                            <tr>
+                                <td align="center">{{ note.datetime.strftime("%Y-%m-%d %H:%M") }}</td>
+                                <td align="center">{{ note.note_detail }}</td>
+                                <td align="center"><button type="button" class="btn btn-outline-danger btn-icon-text"
+                                        onclick="delete_note({{ note.note_number }})">
+                                        <i class="typcn typcn-refresh-outline btn-icon-prepend"></i>
+                                        삭제
+                                    </button></td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="tab-2" class="tab-content">
-        <canvas id="Chart2"></canvas>
-    </div>
-    <div id="tab-3" class="tab-content">
-        <canvas id="Chart3"></canvas>
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card"> <!-- 그래프 -->
+            <div class="card">
+                <div class="card-body">
+                    <!-- <div class="pie_chart">
+                        <h1 style="text-align:center;">일주일 요약</h1>
+                        <canvas id="PieChart"></canvas>
+                    </div>
+                    <ul class="tabs">
+                        <li class="tab-link" data-tab="tab-2">주방</li>
+                        <li class="tab-link" data-tab="tab-3">침실</li>
+                    </ul> -->
+                    <ul class="taabs">
+                        <li class="tab-link current" data-tab="tab-1">거실</li>
+                        <li class="tab-link" data-tab="tab-2">주방</li>
+                        <li class="tab-link" data-tab="tab-3">침실</li>
+                    </ul>
+
+                    <div id="tab-1" class="tab-content current"> <!-- claaaaaaaaaaaas 2개입니다. -->
+                        <canvas id="Chart1" class="chartjs-render-monitor"></canvas>
+                    </div>
+                    <div id="tab-2" class="tab-content">
+                        <canvas id="Chart2" class="chartjs-render-monitor"></canvas>
+                    </div>
+                    <div id="tab-3" class="tab-content">
+                        <canvas id="Chart3" class="chartjs-render-monitor"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script> // 오류 
     $(document).ready(() => {
-        $('ul.tabs li').click((e) => {
+        // tab 클릭 이벤트 핸들러
+        $('ul.taabs li').click((e) => {
+            // 클릭된 탭 정보 가져오기
             let tab = e.target;
             let tab_id = $(tab).data('tab');
-            console.log(tab, tab_id);
-            $('ul.tabs li').removeClass('current');
+
+            // 모든 탭/콘텐츠에서 'current' 클래스 제거
+            $('ul.taabs li').removeClass('current');
             $('.tab-content').removeClass('current');
 
+            // 클릭한 탭/콘텐츠에 'current' 클래스 추가
             $(tab).addClass('current');
             $("#" + tab_id).addClass('current');
         });
-
-        const ctx1 = document.getElementById('Chart1');
+        const plugin = {
+            id: 'customCanvasBackgroundColor',
+            beforeDraw: (chart, args, options) => {
+                const { ctx } = chart;
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-over';
+                ctx.fillStyle = options.color || '#99ffff';
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        };
+        // Chart.js 그래프 생성
+        const ctx1 = document.getElementById('Chart1'); // ELllllqkf 그래프 생성 과정이 달라서 출력이 다르게 되는 건가????
         const ctx2 = document.getElementById('Chart2');
         const ctx3 = document.getElementById('Chart3');
         const pctx = document.getElementById('PieChart');
@@ -80,15 +141,72 @@
             .then(datas => {
                 console.log(datas);
                 for (i in charts) {
-
+                    // Line Chart 생성
                     new Chart(charts[i], {
                         type: 'line',
-                        data: datas.datas[i]
+                        data: datas.datas[i],
+                        options: {
+                           chartArea: {
+                            backgroundColor: '#0000FF'
+                           }
+                        },
                     });
                 }
+                // Pie Chart 생성
                 new Chart(pctx, datas.pie);
             });
-    });
+    });   
 </script>
+
+
+<!-- 
+$(function() {
+  /* ChartJS
+   * -------
+   * Data and config for chartjs
+   */
+  'use strict';
+  var data = {
+    labels: ["2013", "2014", "2014", "2015", "2016", "2017"],
+    datasets: [{
+      label: '# of Votes',
+      data: [10, 19, 3, 5, 2, 3],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+      borderWidth: 1,
+      fill: false
+    }]
+  };
+  
+  // Chart.js를 사용하여 그래프를 그리는 코드
+  var lineChartCanvas = $("#lineChart").get(0).getContext("2d");
+    fetch('/user/graph?user_id={{ user.user_id }}')
+        .then(res => res.json())
+        .then(datas => {
+        console.log(datas);
+        for (i in charts) {
+        new Chart(chart[i], {
+            type: 'line',
+            data: data.datas[i],
+            options: {
+            responsive: true
+            }
+        });
+    }
+}); -->
 
 {% endblock %}

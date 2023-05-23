@@ -1,42 +1,68 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">사용자 관리</h4>
+                    <p class="card-description">
+                        총 사용자수: {{ users | length }}
+                    </p>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <th scope="col">
+                                <form action="/server-url" method="POST">
+                                    <div class="input-group">
+                                        <input type="text" name="unique-number" id="unique-number" placeholder="고유번호"
+                                            class="form-control">
+                                        <button type="submit" class="btn btn-primary mr-2">전송</button>
+                                    </div>
+                                </form>
+                            </th>
+                            <th scope="col">
+                                <form action="/server-url2" method="POST">
+                                    <div class="input-group">
+                                        <input type="text" name="unique-name" id="unique-name" placeholder="이름"
+                                            class="form-control">
+                                        <button type="submit" class="btn btn-primary mr-2">전송</button>
+                                    </div>
+                                </form>
+                            </th>
+                            <th scope="col">
+                                <form action="/server-url3" method="POST">
+                                    <div class="input-group">
+                                        <input type="text" name="unique-place" id="unique-place" placeholder="지역명"
+                                            class="form-control">
+                                        <button type="submit" class="btn btn-primary mr-2">전송</button>
 
-<h1>사용자 관리</h1>
-<p><span>총 사용자수: {{ users | length }}</span></p>
-<table class="custom-table">
-    <th>
-        <form action="/server-url" method="POST">
-            <input type="text" name="unique-number" id="unique-number" placeholder="고유번호">
-            <button type="submit">전송</button>
-        </form>
-    </th>
-    <th>
-        <form action="/server-url2" method="POST">
-            <input type="text" name="unique-name" id="unique-name" placeholder="이름">
-            <button type="submit">전송</button>
-        </form>  
-    </th>
-    <th>
-        <form action="/server-url3" method="POST">
-            <input type="text" name="unique-place" id="unique-place" placeholder="지역명">
-            <button type="submit">전송</button>
-        </form>
-    </th>
-    <th>
-        <form action="/server-url4" method="POST">
-            <input type="text" name="unique-phone-number" id="unique-phone-number" placeholder="전화번호">
-            <button type="submit">전송</button>
-        </form>
-    </th>
-    {% for user in users %}
-    <tr>
-        <td align="center">{{ user.user_id }}</td>
-        <td align="center"><a href="/user?user_id={{ user.user_id }}" class="name">{{ user.name }}</a></td>
-        <td align="center">{{ user.place }}</td>
-        <td align="center">{{ user.phone_number }}</td>
-    </tr>
-    {% endfor %}
-</table>
+                                    </div>
+                                </form>
+                            </th>
+                            <th scope="col">
+                                <form action="/server-url4" method="POST">
+                                    <div class="input-group">
+                                        <input type="text" name="unique-phone-number" id="unique-phone-number"
+                                            placeholder="전화번호" class="form-control">
+                                        <button type="submit" class="btn btn-primary mr-2">전송</button>
 
-
+                                    </div>
+                                </form>
+                            </th>
+                            {% for user in users %}
+                            <tr>
+                                <td align="center">{{ user.user_id }}</td>
+                                <td align="center"><a href="/user?user_id={{ user.user_id }}" class="name">{{ user.name
+                                        }}</a></td>
+                                <td align="center">{{ user.place }}</td>
+                                <td align="center">{{ user.phone_number }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
