@@ -66,15 +66,15 @@ def get_data_graph():
     datas = user.get_beacons()
     pie = []
     for i, data in enumerate(datas):
-        data:Beacon = data.get_env_desc()
         one_pie = data.get_env_1_week_desc()
         for k in range(3):
             pie[k] = one_pie[k]
+        data_desc = data.get_env_desc()
         labels = [d[0] for d in data]
         datasets = [
             {
                 "label": 'silent',
-                "data": [d[1] for d in data],
+                "data": [d[1] for d in data_desc],
                 "borderColor": "#66b3ff",
                 "fill": False,
                 "borderWidth": 1.6,
@@ -83,7 +83,7 @@ def get_data_graph():
             },
             {
                 "label": 'netural',
-                "data": [d[2] for d in data],
+                "data": [d[2] for d in data_desc],
                 "borderColor": "#ff6666",
                 "fill": False,
                 "borderWidth": 1.6,
@@ -92,7 +92,7 @@ def get_data_graph():
             },
             {
                 "label": 'noisy',
-                "data": [d[3] for d in data],
+                "data": [d[3] for d in data_desc],
                 "borderColor": "#ffa500",
                 "fill": False,
                 "borderWidth": 1.6,
