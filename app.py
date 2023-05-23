@@ -70,7 +70,7 @@ def get_data_graph():
         for k in range(3):
             pie[k] += one_pie[k]
         data_desc = data.get_env_desc()
-        labels = [d[0] for d in data]
+        labels = [d[0] for d in data_desc]
         datasets = [
             {
                 "label": 'silent',
