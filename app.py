@@ -64,9 +64,12 @@ def get_data_graph():
     user_id = int(request.args.get('user_id'))
     user = UserInfo.get(user_id)
     datas = user.get_beacons()
-    pie = datas[0].get_env_1_week_desc()
+    pie = []
     for i, data in enumerate(datas):
-        data = data.get_env_desc()
+        data:Beacon = data.get_env_desc()
+        one_pie = data.get_env_1_week_desc()
+        for k in range(3):
+            pie[k] = one_pie[k]
         labels = [d[0] for d in data]
         datasets = [
             {
